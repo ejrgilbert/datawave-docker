@@ -19,7 +19,6 @@ function install_datawave() {
 function configs() {
     rm -rf "${ACCUMULO_HOME}/conf"
     ln -s "${DATAWAVE_HOME}/accumulo/conf" "${ACCUMULO_HOME}"
-    chown accumulo:hadoop "${ACCUMULO_HOME}/conf"
 
     # Setup hadoop config
     update-alternatives --install /etc/hadoop/conf hadoop-conf "${DATAWAVE_HOME}/hadoop/conf" 100
@@ -40,8 +39,9 @@ function activate_install() {
 
 function user_profiles() {
     for link in "${DATAWAVE_HOME}"/*; do
-        if [[ ${link} =~ "99" ]]; then
-            ln -sfT "${DATAWAVE_HOME}/${link}" "/etc/security/limits.d/${link}"
+        name=$(basename "${link}")
+        if [[ ${name} =~ "99" ]]; then
+            ln -sfT "${DATAWAVE_HOME}/${name}" "/etc/security/limits.d/${name}"
         fi
     done
     ln -snf "${DATAWAVE_HOME}/datawave.sh" /etc/profile.d/datawave.sh
