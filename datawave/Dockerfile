@@ -12,11 +12,16 @@ ENV DW_DATAWAVE_INGEST_HDFS_BASEDIR "${HDFS_BASE}/data"
 ENV DW_INSTALL_DIR /opt/datawave-ingest
 
 # Add root and datawave to the hadoop superusergroup...
-RUN usermod -a -G hadoop root && \
-    usermod -a -G hadoop datawave
+RUN groupadd hadoop && \
+    useradd datawave && \
+    useradd accumulo && \
+    usermod -a -G hadoop root && \
+    usermod -a -G hadoop datawave \
+    usermod -a G hadoop accumulo
 
 # Fix permissions of various files
-RUN mkdir -p /srv/logs/ingest && \
+RUN mkdir ${DW_INSTALL_DIR} && \
+    mkdir -p /srv/logs/ingest && \
     chmod 777 /srv/logs/ingest && \
     mkdir -p /srv/vfs-cache && \
     chmod 777 /srv/vfs-cache && \
